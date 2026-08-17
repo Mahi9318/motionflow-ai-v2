@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MotionFlow AI</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<main class="wrap">
+<header>
+  <div class="logo">MF</div>
+  <div><h1>MotionFlow AI</h1><p>Kling Motion Control Studio</p></div>
+</header>
+
+<section class="card">
+<h2>Animate your character</h2>
+<p class="muted">Upload a character image and a reference motion video.</p>
+
+<form id="form">
+<div class="grid">
+<label class="upload">
+<span>🖼️ Character Image</span>
+<input id="image" name="image" type="file" accept="image/*" required>
+<b id="imageName">Choose image</b>
+</label>
+
+<label class="upload">
+<span>🎥 Motion Video</span>
+<input id="video" name="video" type="file" accept="video/*" required>
+<b id="videoName">Choose video</b>
+</label>
+</div>
+
+<label>Prompt (optional)
+<textarea name="prompt" placeholder="Describe the character performance..."></textarea>
+</label>
+
+<div class="settings">
+<label>Orientation
+<select name="orientation">
+<option value="video">Match motion video</option>
+<option value="image">Match character image</option>
+</select>
+</label>
+
+<label>Quality
+<select name="quality">
+<option value="standard">V3 Standard</option>
+<option value="pro">V3 Pro</option>
+</select>
+</label>
+</div>
+
+<button id="generate" type="submit">Generate Motion</button>
+</form>
+
+<div id="status" class="status hidden"></div>
+
+<div id="result" class="result hidden">
+<h3>Generated Video</h3>
+<video id="output" controls playsinline></video>
+<a id="download" class="download" target="_blank" rel="noopener">Open / Download Video</a>
+</div>
+</section>
+<p class="foot">Your API key stays on the server.</p>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+$("image").onchange=e=>$("imageName").textContent=e.target.files[0]?.name||"Choose image";
+$("video").onchange=e=>$("videoName").textContent=e.target.files[0]?.name||"Choose video";
+
+$("form").onsubmit=async e=>{
+ e.preventDefault();
+ $("generate").disabled=true;
+ $("generate").textContent="Uploading...";
+ $("status").classList.remove("hidden");
+ $("status").textContent="Uploading files...";
+ $("result").classList.add("hidden");
+
+ try{
+  const r=await fetch("/api/generate",{method:"POST",body:new FormData($("form"))});
+  const d=await r.json();
+  if(!r.ok) throw Error(d.error||"Generation failed");
+  $("status").textContent="⏳ Generation queued...";
+  poll(d.request_id,d.model);
+ }catch(err){
+  $("status").textContent="❌ "+err.message;
+  $("generate").disabled=false;
+  $("generate").textContent="Generate Motion";
+ }
+};
+
+async function poll(id,model){
+ try{
+  const r=await fetch("/api/status/"+encodeURIComponent(id)+"?model="+encodeURIComponent(model));
+  const d=await r.json();
+  if(!r.ok) throw Error(d.error||"Status error");
+
+  if(d.status==="COMPLETED" && d.video_url){
+   $("status").textContent="✅ Generation complete!";
+   $("output").src=d.video_url;
+   $("download").href=d.video_url;
+   $("result").classList.remove("hidden");
+   $("generate").disabled=false;
+   $("generate").textContent="Generate Motion";
+   return;
+  }
+
+  $("status").textContent=d.status==="IN_PROGRESS"?"⚙️ Generating...":"⏳ Waiting in queue...";
+  setTimeout(()=>poll(id,model),4000);
+ }catch(err){
+  $("status").textContent="❌ "+err.message;
+  $("generate").disabled=false;
+  $("generate").textContent="Generate Motion";
+ }
+}
+</script>
+</body>
+</html>
