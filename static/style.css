@@ -1,1 +1,267 @@
+* {
+  box-sizing: border-box;
+}
 
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at top, #202040 0%, #0b0b12 45%, #050509 100%);
+  color: #fff;
+}
+
+.container {
+  width: min(900px, 94%);
+  margin: auto;
+  padding: 35px 0 25px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.logo {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.logo span {
+  background: linear-gradient(90deg, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+header p {
+  color: #aaa;
+  margin-top: 8px;
+}
+
+.card {
+  background: rgba(20, 20, 31, 0.92);
+  border: 1px solid #303044;
+  border-radius: 22px;
+  padding: 28px;
+  box-shadow: 0 20px 70px rgba(0,0,0,.45);
+}
+
+h1 {
+  margin: 0;
+  text-align: center;
+  font-size: 27px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #999;
+  margin-bottom: 28px;
+}
+
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.upload-box {
+  min-height: 180px;
+  border: 2px dashed #44445b;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  padding: 20px;
+  transition: .2s;
+}
+
+.upload-box:hover {
+  border-color: #8b5cf6;
+  background: rgba(139,92,246,.08);
+}
+
+.upload-box input {
+  display: none;
+}
+
+.upload-icon {
+  font-size: 38px;
+  margin-bottom: 12px;
+}
+
+.upload-box small {
+  color: #888;
+  margin-top: 7px;
+}
+
+.upload-box span {
+  color: #a78bfa;
+  margin-top: 10px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.field {
+  display: block;
+  margin-top: 20px;
+}
+
+.field > span {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 9px;
+}
+
+.field small {
+  color: #777;
+  font-weight: normal;
+}
+
+textarea,
+select {
+  width: 100%;
+  border: 1px solid #39394e;
+  background: #101018;
+  color: white;
+  border-radius: 12px;
+  padding: 13px;
+  outline: none;
+  font-size: 15px;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+textarea:focus,
+select:focus {
+  border-color: #8b5cf6;
+}
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 13px;
+  margin-top: 25px;
+  padding: 15px;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(90deg, #7c3aed, #db2777);
+}
+
+button:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-top: 18px;
+  padding: 13px;
+  border-radius: 10px;
+  text-align: center;
+  background: #181827;
+}
+
+.message.success {
+  border: 1px solid #315d42;
+}
+
+.message.error {
+  border: 1px solid #7f3030;
+  color: #ffb4b4;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.spinner {
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+  margin-left: 8px;
+  border: 2px solid rgba(255,255,255,.4);
+  border-top-color: white;
+  border-radius: 50%;
+  vertical-align: middle;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.result {
+  margin-top: 28px;
+  padding-top: 25px;
+  border-top: 1px solid #303044;
+}
+
+.result h2 {
+  text-align: center;
+}
+
+.result video {
+  width: 100%;
+  max-height: 600px;
+  border-radius: 14px;
+  background: #000;
+}
+
+.download {
+  display: block;
+  text-align: center;
+  margin-top: 15px;
+  padding: 13px;
+  border-radius: 11px;
+  text-decoration: none;
+  color: white;
+  background: #25253a;
+}
+
+footer {
+  text-align: center;
+  color: #666;
+  margin-top: 25px;
+  font-size: 13px;
+}
+
+@media (max-width: 650px) {
+  .container {
+    padding-top: 20px;
+  }
+
+  .card {
+    padding: 18px;
+    border-radius: 17px;
+  }
+
+  .logo {
+    font-size: 31px;
+  }
+
+  .upload-grid,
+  .options {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-box {
+    min-height: 150px;
+  }
+    }
