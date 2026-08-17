@@ -1,205 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MotionFlow AI</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MotionFlow AI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b0b12;
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+            padding: 30px 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 35px;
+        }
+
+        .card {
+            background: #15151f;
+            border: 1px solid #292936;
+            border-radius: 18px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        button {
+            width: 100%;
+            border-radius: 10px;
+            padding: 14px;
+            border: 1px solid #333;
+            background: #0d0d14;
+            color: white;
+            margin-bottom: 18px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        button {
+            background: #6c4cff;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #5738e8;
+        }
+
+        #status {
+            text-align: center;
+            color: #aaa;
+            margin-top: 10px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #666;
+            margin-top: 30px;
+        }
+    </style>
 </head>
 
 <body>
-  <main class="container">
 
-    <header>
-      <div class="logo">MotionFlow <span>AI</span></div>
-      <p>Kling V3 Motion Control</p>
-    </header>
+<div class="container">
 
-    <section class="card">
+    <h1>MotionFlow AI</h1>
 
-      <h1>Animate Your Character</h1>
-      <p class="subtitle">
-        Upload a character image and a motion reference video.
-      </p>
+    <div class="subtitle">
+        Kling Motion Control Style AI Video Generator
+    </div>
 
-      <form id="generateForm">
+    <div class="card">
 
-        <div class="upload-grid">
+        <label>Image</label>
+        <input type="file" id="image" accept="image/*">
 
-          <label class="upload-box">
-            <input type="file" id="image" name="image"
-                   accept="image/png,image/jpeg,image/webp" required>
-            <div class="upload-icon">🖼️</div>
-            <strong>Character Image</strong>
-            <small>PNG, JPG or WEBP</small>
-            <span id="imageName"></span>
-          </label>
+        <label>Motion Video</label>
+        <input type="file" id="video" accept="video/*">
 
-          <label class="upload-box">
-            <input type="file" id="video" name="video"
-                   accept="video/mp4,video/webm" required>
-            <div class="upload-icon">🎬</div>
-            <strong>Motion Video</strong>
-            <small>MP4 or WEBM</small>
-            <span id="videoName"></span>
-          </label>
+        <label>Prompt</label>
 
-        </div>
-
-        <label class="field">
-          <span>Prompt <small>(optional)</small></span>
-          <textarea
+        <textarea
             id="prompt"
-            name="prompt"
-            placeholder="Describe the desired motion or scene..."></textarea>
-        </label>
+            placeholder="Describe your video..."
+        ></textarea>
 
-        <div class="options">
-
-          <label class="field">
-            <span>Character Orientation</span>
-            <select id="orientation" name="orientation">
-              <option value="video">Follow Video</option>
-              <option value="image">Follow Image</option>
-            </select>
-          </label>
-
-          <label class="field">
-            <span>Quality</span>
-            <select id="quality" name="quality">
-              <option value="standard">Standard</option>
-              <option value="pro">Pro</option>
-            </select>
-          </label>
-
-        </div>
-
-        <button type="submit" id="generateBtn">
-          <span id="btnText">Generate Video</span>
-          <span id="spinner" class="spinner hidden"></span>
+        <button onclick="generateVideo()">
+            Generate Video
         </button>
 
-      </form>
+        <div id="status"></div>
 
-      <div id="message" class="message hidden"></div>
+    </div>
 
-      <section id="result" class="result hidden">
-        <h2>✨ Your Video Is Ready</h2>
-        <video id="resultVideo" controls playsinline></video>
-        <a id="downloadBtn" class="download" target="_blank">
-          Open / Download Video
-        </a>
-      </section>
+    <div class="card">
 
-    </section>
+        <h2>MotionFlow AI</h2>
 
-    <footer>
-      MotionFlow AI • Powered by Kling V3
-    </footer>
+        <p>
+            Upload an image and motion video, then generate
+            your AI motion-control video.
+        </p>
 
-  </main>
+    </div>
+
+    <div class="footer">
+        MotionFlow AI © 2026
+    </div>
+
+</div>
 
 <script>
-const form = document.getElementById("generateForm");
-const btn = document.getElementById("generateBtn");
-const btnText = document.getElementById("btnText");
-const spinner = document.getElementById("spinner");
-const message = document.getElementById("message");
-const result = document.getElementById("result");
-const resultVideo = document.getElementById("resultVideo");
-const downloadBtn = document.getElementById("downloadBtn");
 
-document.getElementById("image").addEventListener("change", function () {
-  document.getElementById("imageName").textContent =
-    this.files[0] ? this.files[0].name : "";
-});
+async function generateVideo() {
 
-document.getElementById("video").addEventListener("change", function () {
-  document.getElementById("videoName").textContent =
-    this.files[0] ? this.files[0].name : "";
-});
+    const status = document.getElementById("status");
 
-function showMessage(text, error = false) {
-  message.textContent = text;
-  message.className = "message " + (error ? "error" : "success");
+    status.innerText = "Checking server...";
+
+    try {
+
+        const response = await fetch("/health");
+
+        const data = await response.json();
+
+        if (data.ok) {
+
+            status.innerText =
+                "Server is working. AI generation endpoint needs to be connected.";
+
+        } else {
+
+            status.innerText = "Server error.";
+
+        }
+
+    } catch (error) {
+
+        status.innerText =
+            "Connection error: " + error.message;
+
+    }
+
 }
 
-function setLoading(loading) {
-  btn.disabled = loading;
-  spinner.classList.toggle("hidden", !loading);
-  btnText.textContent = loading ? "Generating..." : "Generate Video";
-}
-
-async function pollStatus(requestId, model) {
-  for (let i = 0; i < 180; i++) {
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
-    const response = await fetch(
-      `/api/status/${encodeURIComponent(requestId)}?model=${encodeURIComponent(model)}`
-    );
-
-    const data = await response.json();
-
-    if (!response.ok || data.error) {
-      throw new Error(data.error || "Status check failed.");
-    }
-
-    if (data.status === "COMPLETED") {
-      if (!data.video_url) {
-        throw new Error("Generation completed but no video URL was returned.");
-      }
-
-      resultVideo.src = data.video_url;
-      downloadBtn.href = data.video_url;
-
-      result.classList.remove("hidden");
-      showMessage("Video generated successfully!");
-      return;
-    }
-
-    if (data.status === "IN_PROGRESS") {
-      showMessage("AI is generating your video...");
-    } else {
-      showMessage("Your request is in the queue...");
-    }
-  }
-
-  throw new Error("Generation is taking too long. Please try again.");
-}
-
-form.addEventListener("submit", async function (e) {
-  e.preventDefault();
-
-  result.classList.add("hidden");
-  message.className = "message hidden";
-  setLoading(true);
-
-  try {
-    const formData = new FormData(form);
-
-    showMessage("Uploading files...");
-
-    const response = await fetch("/api/generate", {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await response.json();
-
-    if (!response.ok || data.error) {
-      throw new Error(data.error || "Generation request failed.");
-    }
-
-    showMessage("Request submitted. Generating video...");
-    await pollStatus(data.request_id, data.model);
-
-  } catch (error) {
-    console.error(error);
-    showMessage(error.message || "Something went wrong.", true);
-  } finally {
-    setLoading(false);
-  }
-});
 </script>
 
 </body>
